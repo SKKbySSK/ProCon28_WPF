@@ -7,8 +7,9 @@ using OpenCvSharp;
 
 namespace ProCon28_WPF
 {
-    interface ISampleReader
+    interface ISampleReader : IDisposable
     {
         Mat Sample();
+        RecognizerCollection Recognizers { get; }
     }
 }

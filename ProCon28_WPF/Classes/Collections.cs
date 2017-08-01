@@ -8,81 +8,66 @@ using System.IO;
 
 namespace ProCon28_WPF
 {
-    class ReportCollection : ObservableCollection<IReport>
+    class ReportCollection : ObservableCollection<IReport>, IDisposable
     {
+        public ReportCollection(Mat Sample)
+        {
+            this.Sample = Sample;
+        }
+
+        public Mat Sample { get; private set; }
+
+        public void Dispose()
+        {
+            Sample = null;
+            foreach(IReport rep in this)
+            {
+                rep.Dispose();
+            }
+        }
+
         public void Export(string DirectoryPath)
         {
             Directory.CreateDirectory(DirectoryPath);
             foreach(IReport rep in this)
             {
-                rep.Sample.SaveImage(Path.Combine(DirectoryPath, rep.Title + ".png"));
+                Sample.SaveImage(Path.Combine(DirectoryPath, rep.Title + ".png"));
             }
+        }
+
+        public T Select<T>(int Index = 0) where T : class, IReport
+        {
+            int ind = 0;
+            foreach(IReport rep in this)
+            {
+                if (rep is T)
+                {
+                    if (ind == Index)
+                        return (T)rep;
+                    else
+                        ind++;
+                }
+            }
+
+            return null;
         }
     }
 
     class RecognizerCollection : ObservableCollection<ISampleRecognizer>
     {
-        bool abort = false;
-        Task<ReportCollection> task = null;
-
-        public RecognizerCollection() { }
-        public RecognizerCollection(ISampleReader SampleReader)
+        public ReportCollection Recognize(Mat Sample)
         {
-            this.SampleReader = SampleReader;
-        }
-
-        public ISampleReader SampleReader { get; set; }
-
-        public void Recognize()
-        {
-            if(task == null || task.IsCompleted || task.IsFaulted)
+            ReportCollection reports = new ReportCollection(Sample);
+            int count = Count;
+            if (count > 0)
             {
-                task = Task.Run(() =>
+                foreach (ISampleRecognizer rec in this)
                 {
-                    if (SampleReader == null)
-                        throw new Exception("Readerが設定されていません");
-
-                    ReportCollection reports = new ReportCollection();
-                    int count = Count;
-                    if(count > 0)
-                    {
-                        using (Mat image = SampleReader.Sample())
-                        {
-                            foreach (ISampleRecognizer rec in this)
-                            {
-                                IReport[] reps = rec.Recognize(image);
-                                foreach (IReport rep in reps) reports.Add(rep);
-
-                                if (abort)
-                                {
-                                    abort = false;
-                                    return reports;
-                                }
-                            }
-                        }
-                    }
-                    return reports;
-                });
+                    IReport[] reps = rec.Recognize(Sample);
+                    foreach (IReport rep in reps) reports.Add(rep);
+                }
             }
-            else
-            {
-                throw new Exception("認識中の処理があるため、Abortメソッドを先に呼ぶ必要があります");
-            }
-        }
-
-        public ReportCollection GetReports()
-        {
-            if (task != null)
-            {
-                return task.Result;
-            }
-            else
-                throw new Exception("認識が開始されていません");
-        }
-
-        public void AbortRecognition()
-        {
-            abort = true;
+            return reports;
         }
     }
 }

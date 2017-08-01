@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProCon28_WPF
 {
-    interface IReport
+    interface IReport : IDisposable
     {
         string Title { get; }
-        OpenCvSharp.Mat Sample { get; }
     }
 }

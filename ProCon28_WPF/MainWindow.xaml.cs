@@ -20,7 +20,7 @@ namespace ProCon28_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        RecognizerCollection Recognizers = new RecognizerCollection();
+        ISampleReader Sampler { get; set; }
 
         public MainWindow()
         {
@@ -29,19 +29,20 @@ namespace ProCon28_WPF
 
         void Begin_Click(object sender, EventArgs e)
         {
-            Recognizers.SampleReader = new SampleReaders.CameraSampler(0);
-            Recognizers.Add(new SampleRecognizers.HarrisCorner());
-        }
+            Sampler?.Dispose();
 
-        void Recognize_Click(object sender, EventArgs e)
-        {
-            Recognizers.Recognize();
-        }
+            switch (SamplerBox.SelectedIndex)
+            {
+                case 0:
+                    Sampler = new SampleReaders.CameraSampler(0);
+                    Sampler.Recognizers.Add(new SampleRecognizers.HarrisCorner());
+                    break;
+            }
 
-        void Export_Click(object sender, EventArgs e)
-        {
-            ReportCollection reps = Recognizers.GetReports();
-            reps.Export(ExportDirT.Text);
+            if(Sampler is SampleReaders.WindowSamplerBase window)
+            {
+                window.BeginUpdate();
+            }
         }
     }
 }

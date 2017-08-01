@@ -7,12 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Button Content="認識" HorizontalAlignment="Left" Margin="90,37,0,0" VerticalAlignment="Top" Width="75" Click="Recognize_Click"/>
-        <ComboBox HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="268" SelectedIndex="0">
+        <ComboBox x:Name="SamplerBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="268" SelectedIndex="0">
             <ComboBoxItem Content="CameraSampler"/>
         </ComboBox>
         <Button Content="開始" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="75" Click="Begin_Click"/>
-        <Button Content="レポートの書き出し" HorizontalAlignment="Left" Margin="283,11,0,0" VerticalAlignment="Top" Width="108" Click="Export_Click"/>
+        <Button Content="レポートの書き出し" HorizontalAlignment="Left" Margin="283,11,0,0" VerticalAlignment="Top" Width="108"/>
         <TextBox x:Name="ExportDirT" Height="23" Margin="283,37,10.429,0" TextWrapping="Wrap" Text="Reports\" VerticalAlignment="Top"/>
 
     </Grid>

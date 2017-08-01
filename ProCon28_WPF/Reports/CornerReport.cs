@@ -7,18 +7,15 @@ using OpenCvSharp;
 
 namespace ProCon28_WPF.Reports
 {
-    class CornerReport : IReport
+    class CornerReport : ReportBase
     {
-        public CornerReport(string Title, Mat Sample, Point2f[] Corners)
+        public CornerReport(string Title, Point2f[] Corners)
         {
             this.Title = Title;
-            this.Sample = Sample;
             this.Corners = Corners;
         }
 
-        public string Title { get; }
-
-        public Mat Sample { get; }
+        public override string Title { get; }
 
         public Point2f[] Corners { get; }
     }

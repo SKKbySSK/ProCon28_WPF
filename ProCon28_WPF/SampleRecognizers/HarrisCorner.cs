@@ -23,27 +23,19 @@ namespace ProCon28_WPF.SampleRecognizers
 
         public IReport[] Recognize(Mat Sample)
         {
-            Mat cvt = new Mat(), bin = new Mat();
+            Mat cvt = new Mat(), bin = new Mat(), binex = new Mat();
             Cv2.CvtColor(Sample, cvt, ColorConversionCodes.BGR2GRAY);
             Cv2.Threshold(cvt, bin, Threshold, 255, ThresholdTypes.Tozero);
-            Cv2.Threshold(bin, bin, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
-            Point2f[] corners = Cv2.GoodFeaturesToTrack(bin, 400, QualityLevel, MinDistance, null, BlockSize, true, 10);
+            Cv2.Threshold(bin, binex, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+            Point2f[] corners = Cv2.GoodFeaturesToTrack(binex, 400, QualityLevel, MinDistance, null, BlockSize, true, 10);
+
             cvt.Dispose();
-
-
-            Mat csample = new Mat();
-            Sample.CopyTo(csample);
-
-            foreach (Point2f p in corners)
-            {
-                Cv2.Circle(csample, p, 1, Scalar.Red);
-                Cv2.Circle(bin, p, 1, Scalar.Red);
-            }
+            bin.Dispose();
+            binex.Dispose();
 
             return new IReport[]
             {
-                new Reports.CornerReport("Harris Corner[Binary]", bin, corners),
-                new Reports.CornerReport("Harris Corner[Color]", csample, corners)
+                new Reports.CornerReport("Harris Corner", corners)
             };
         }
     }
