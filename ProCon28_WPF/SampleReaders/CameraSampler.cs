@@ -17,7 +17,7 @@ namespace ProCon28_WPF.SampleReaders
 
             UpdateInterval = 50;
             ShowWindow("Camera Sampler");
-            CreateTrackbar("Points", VerticalPoints, 50, (val) =>
+            CreateTrackbar("Points", VerticalPoints, 30, (val) =>
             {
                 VerticalPoints = val;
                 HorizontalPoints = val;
